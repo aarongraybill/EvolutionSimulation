@@ -1,4 +1,47 @@
-\input{Preamble.tex}
+\documentclass[12pt,english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage[margin=1in]{geometry}
+\setlength{\parskip}{\bigskipamount}
+\setlength{\parindent}{0pt}
+
+\usepackage{tikz}
+%\usepackage{pgfplots}
+%\let\textlozenge\relax
+\usepackage{heuristica}
+\usepackage[heuristica,vvarbb,bigdelims]{newtxmath}
+\usepackage[T1]{fontenc}
+%\usepackage{amsthm}
+%\usepackage{amssymb}
+%\usepackage{float}
+
 
 \title{Simulating Community Under Evolutionary and Predatory Pressures}
 \author{Aaron Graybill}
+
+\begin{document}
+\maketitle
+\bigskip
+\section{Intuitive Setup}
+
+We wish to create a model the change of predator and prey populations over time. We assume that predators and prey have the ability to see a limited range around them. With this limited range of vision, both predators and prey must decide how much effort to expend moving in any direction. If a predator comes into contact with prey, then the prey is consumed and the predator gains energy. The prey gains energy over time, but depletes that energy faster than it can regenerate while moving. As such, the prey will need to rest, or graze to regenerate energy. 
+
+In addition to energy, there is the matter of reproduction. Reproduction, I will assume, costs a considerable amount of energy. As such the predators and prey will only reproduce once they have a certain energy level (NEED TO DECIDE IF THIS WOULD BE ENDOGENIZED). Reproduction, like true genetics, will be mostly determined by the genetics of the parent with a smattering of randomness to allow for evolution. These genetics determine how a creature responds to the visual stimulus it has as well as its current energy.
+
+\section{Model \& Mathematical Setup}
+
+It first makes sense to formalize the problem of an individual predator and prey. Henceforth, I will define a predator as $a$ for attack and prey as $d$ for defend. Each creature has a cone of vision containing the area it can see. From this cone of vision, I sample a number $c_a$ and $c_d$ rays from the creature and ray trace outwards for a  certain distance. Each of these rays returns a two dimensional output based on what the ray intersects first. If ray hits a predator at distance $r$, then the output of the ray would be $[\frac{1}{r},0]$, likewise, if the ray first hits a prey at length $r'$, then the output vector would be $[0,\frac{1}{r'}]$. 
+
+As such, the predator has a $c_a\cdot2+1$-dimensional input space. The $1$ is how the predator interprets its current energy level.
+
+The predator's output space is three-dimensional. The predator must select a direction of movement, $\theta\in[0,\pi]$, a distance to cover $r\in[\underline{r}_a,\overline{r}_a]$. More movement incurs a larger energy cost. The movement term is constructed as such because backwards movements may be more difficult than foreward movement. A creature may choose to move backwards and not turn and then proceed forward in order to maintain their current cone of vision. Finally, the predator must decide how much to invest in reproduction, $\rho\in[0,E_a]$ where $E_a$ is a predator's total available energy.
+
+As such, we can aggregate the predators problem into basic neural network as follows. The input vector $\mathbf{I}_a$ has $N_a=c_a\cdot2+1$ entries are transformed according to a matrix $A_{a(N_a\times 3)}$. This setup has the caveat of whenever there are no nearby creatures, the input vector would largely resemble the zero vector and would produce an outcome that encourages inactivity, $r\approx 0$. This behavior may or may not be optimal so before transforming the input $I_a$, I introduce a vector of biases, $\mathbf{b}_{a(c_a\cdot2+1)}$. Finally, to prevent the resultant output vector from producing strategies outside the allowable range, I apply a scaled sigmoid function that constrains the first two outputs between $[0,\pi]$, $[\underline{r}_a,\overline{r}_a]$, and $[0,E_a]$.
+
+Therefore, a creatures strategy at any given time is then 
+\[\sigma\left(A_a(\mathbf{I}_a-\mathbf{b}_a)\right)\]
+
+We can then 
+
+
+\end{document}
